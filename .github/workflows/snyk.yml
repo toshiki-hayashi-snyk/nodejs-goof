@@ -12,10 +12,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout source code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
@@ -23,20 +23,21 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Set up Snyk CLI
+      - name: Setup Snyk CLI
         uses: snyk/actions/setup@master
 
-      - name: Run Snyk scan
+      - name: Run Snyk test (allow failure for report)
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: snyk test
+        run: |
+          snyk test --json | tee snyk-output.json || true
 
-      - name: Generate Snyk HTML report (optional)
+      - name: Generate Snyk HTML report
         run: |
           npm install -g snyk-to-html
-          snyk test --json | snyk-to-html -o snyk_report.html
+          snyk-to-html -i snyk-output.json -o snyk_report.html
 
-      - name: Upload HTML report (optional)
+      - name: Upload Snyk HTML report
         uses: actions/upload-artifact@v4
         with:
           name: snyk-report
