@@ -16,7 +16,9 @@ jobs:
           command: snyk auth $SNYK_TOKEN
       - run:
           name: Run tests
-          command: npm test --passWithNoTests
+          command: |
+            snyk auth $SNYK_TOKEN
+            npm test --passWithNoTests
   build-node:
     executor: node/default
     steps:
