@@ -9,6 +9,9 @@ jobs:
       - node/install-packages:
           pkg-manager: npm
       - run:
+          name: Install Snyk CLI
+          command: npm install -g snyk
+      - run:
           name: Authenticate Snyk
           command: snyk auth $SNYK_TOKEN
       - run:
